@@ -1,0 +1,16 @@
+{
+    "name": "cccadv",
+    "version": "0.0.1",
+    "description": "cocos creator extension to make ADV games.",
+    "author": "jikai",
+    "main": "main.js",
+    "runtime-resource": {
+        "path": "resources",
+        "name": "resources"
+    },
+    "reload": {
+        "ignore": [
+            "resources/scripts/**/*"
+        ]
+    }
+}
