@@ -4,6 +4,9 @@ const {ccclass, property, menu} = cc._decorator;
 @menu("cccadv/ComTitle")
 export class ComTitle extends cc.Component {
 
+    @property({ visible: true })
+    private gameSceneName: string = "game";
+
     protected onLoad(): void {
         try {
             cc.director.getPhysicsManager().enabled = false;
@@ -14,7 +17,7 @@ export class ComTitle extends cc.Component {
     }
 
     public newGame(): void {
-
+        cc.director.loadScene(this.gameSceneName);
     }
 
     public loadGame(): void {
