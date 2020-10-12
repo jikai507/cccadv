@@ -2,6 +2,11 @@ import { DB } from "../DB";
 
 const {ccclass, property, menu} = cc._decorator;
 
+export enum Language {
+    Chinese,
+    English,
+}
+
 @ccclass
 @menu("cccadv/ComSetting")
 export class ComSetting extends cc.Component {
@@ -11,6 +16,12 @@ export class ComSetting extends cc.Component {
     public static readonly MAX_VOLUME: number = 100;
 
     private static readonly DB_KEY: string = "setting";
+
+    @property({ visible: true, type: cc.Enum(Language) })
+    private language: Language = Language.Chinese;
+
+    @property({ visible: true })
+    private isMute: boolean = false;
 
     @property({ visible: true, type: cc.Integer, min: ComSetting.MIN_VOLUME, max: ComSetting.MAX_VOLUME })
     private volumeOfBackgroundMusic: number = 75;
@@ -23,6 +34,27 @@ export class ComSetting extends cc.Component {
 
     protected start(): void {
         this.load();
+    }
+
+    public setLanguage(lang: Language): void {
+        if (undefined === lang || null === lang) {
+            return;
+        }
+        this.language = lang;
+    }
+
+    public getLanguage(): Language {
+        return this.language;
+    }
+
+    public set muteMode(isMute: boolean) {
+        if (true === isMute || false === isMute) {
+            this.isMute = isMute;
+        }
+    }
+
+    public get muteMode(): boolean {
+        return this.isMute;
     }
 
     private clampVolume(v: number): number {
@@ -74,6 +106,7 @@ export class ComSetting extends cc.Component {
     private save(): void {
         try {
             const setting: ISetting = {
+                isMute: this.muteMode,
                 volumeOfBackgroundMusic: this.getVolumeOfBackgroundMusic(),
                 volumeOfSoundEffect: this.getVolumeOfSoundEffect(),
                 volumeOfVoice: this.getVolumeOfVoice(),
@@ -90,6 +123,7 @@ export class ComSetting extends cc.Component {
             if (undefined === setting || null === setting) {
                 return;
             }
+            this.muteMode = setting.isMute;
             this.setVolumeOfBackgroundMusic(setting.volumeOfBackgroundMusic);
             this.setVolumeOfSoundEffect(setting.volumeOfSoundEffect);
             this.setVolumeOfVoice(setting.volumeOfVoice);
@@ -101,6 +135,8 @@ export class ComSetting extends cc.Component {
 }
 
 interface ISetting {
+
+    isMute: boolean;
 
     volumeOfBackgroundMusic: number;
 

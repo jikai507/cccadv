@@ -13,7 +13,7 @@ export class DB {
             if (undefined === json || null === json || json.length < "{}".length) {
                 throw `stringify object failed.`;
             }
-            cc.sys.localStorage.set(key, json);
+            cc.sys.localStorage.setItem(key, json);
         } catch (e) {
             console.error(`DB.put: ${e}`);
         }
@@ -24,7 +24,7 @@ export class DB {
             if (!key) {
                 return null;
             }
-            const json: string = cc.sys.localStorage.get(key);
+            const json: string = cc.sys.localStorage.getItem(key);
             if (undefined === json || null === json) {
                 return null;
             }
