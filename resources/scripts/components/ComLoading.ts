@@ -1,4 +1,5 @@
 import { CharacterManager } from "../Character";
+import { PlotManager } from "../Plot";
 
 const {ccclass, property, menu} = cc._decorator;
 
@@ -6,7 +7,7 @@ const {ccclass, property, menu} = cc._decorator;
 @menu("cccadv/ComLoading")
 export class ComLoading extends cc.Component {
 
-    private static readonly INIT_MANAGER_COUNT: number = 1;
+    private static readonly INIT_MANAGER_COUNT: number = 2;
 
     protected onLoad(): void {
         try {
@@ -19,6 +20,16 @@ export class ComLoading extends cc.Component {
                     this._onManagerInitOver(overCount);
                 } else {
                     console.error(`character manager init failed.`);
+                }
+            });
+
+            PlotManager.instance.init((err?: string) => {
+                if (!err) {
+                    console.debug(`plot manager init over.`);
+                    overCount++;
+                    this._onManagerInitOver(overCount);
+                } else {
+                    console.error(`plot manager init failed.`);
                 }
             });
         } catch (e) {

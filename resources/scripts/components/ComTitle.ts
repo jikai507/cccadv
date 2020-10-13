@@ -17,7 +17,9 @@ export class ComTitle extends cc.Component {
     }
 
     public newGame(): void {
-        cc.director.loadScene(this.gameSceneName);
+        cc.director.loadScene(this.gameSceneName, () => {
+            cc.director.emit("new_game");
+        });
     }
 
     public loadGame(): void {

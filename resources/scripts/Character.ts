@@ -1,15 +1,11 @@
-import { I2DVector, IInitRequired, ILocaleText, ITable } from "./Interfaces";
+import { IInitRequired, ILocaleText, ITable, ITexture } from "./Interfaces";
 import { isNone } from "./Util";
 
 export interface ICharacter {
 
     readonly displayName: ILocaleText;
 
-    readonly image: string;
-
-    readonly pos: I2DVector;
-
-    readonly size: I2DVector;
+    readonly texture: ITexture;
 
 }
 
