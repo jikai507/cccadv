@@ -1,5 +1,4 @@
-import { IInitRequired, ITable } from "./Interfaces";
-import { isNone } from "./Util";
+import { ResourceManager } from "./ResourceManager";
 
 export type Plot = Array<IPlotAction>;
 
@@ -35,47 +34,16 @@ export interface ICondition extends IPlotAction {
     
 }
 
-export class PlotManager implements IInitRequired {
+export class PlotManager extends ResourceManager<Plot> {
 
     public static readonly BEGIN_PLOT_ID: string = "begin";
 
     public static readonly instance: PlotManager = new PlotManager();
 
-    private curPlotID: string = PlotManager.BEGIN_PLOT_ID;
+    protected resDataFile: string = "plot";
 
-    private plots: ITable<Plot> = {};
-
-    private constructor() {}
-
-    public init(over: (err?: string) => void) {
-        cc.resources.load("data/plot", cc.JsonAsset, (err: Error, asset: cc.JsonAsset) => {
-            if (err) {
-                over(`PlotManager.init: load json asset failed. ${err}`);
-                return;
-            }
-            if (isNone(asset) || isNone(asset.json)) {
-                over(`PlotManager.init: invalid data.`);
-                return;
-            }
-            this.plots = asset.json;
-            over();
-        });
-    }
-
-    public getPlot(id: string): Plot {
-        try {
-            if (!id) {
-                throw `invalid plot id.`;
-            }
-            const plot: Plot = this.plots[id];
-            if (isNone(plot)) {
-                throw `not found plot "${id}".`;
-            }
-            return plot;
-        } catch (e) {
-            console.error(`PlotManager.getPlot: ${e}`);
-            return null;
-        }
+    private constructor() {
+        super();
     }
 
     public goon(): void {

@@ -1,5 +1,9 @@
+import { AudioManager } from "../Audio";
+import { BackgroundManager } from "../Background";
 import { CharacterManager } from "../Character";
+import { IInitRequired } from "../Interfaces";
 import { PlotManager } from "../Plot";
+import { ResourceManager } from "../ResourceManager";
 
 const {ccclass, property, menu} = cc._decorator;
 
@@ -7,38 +11,33 @@ const {ccclass, property, menu} = cc._decorator;
 @menu("cccadv/ComLoading")
 export class ComLoading extends cc.Component {
 
-    private static readonly INIT_MANAGER_COUNT: number = 2;
-
     protected onLoad(): void {
         try {
             let overCount: number = 0;
-
-            CharacterManager.instance.init((err?: string) => {
-                if (!err) {
-                    console.debug(`character manager init over.`);
-                    overCount++;
-                    this._onManagerInitOver(overCount);
-                } else {
-                    console.error(`character manager init failed.`);
-                }
-            });
-
-            PlotManager.instance.init((err?: string) => {
-                if (!err) {
-                    console.debug(`plot manager init over.`);
-                    overCount++;
-                    this._onManagerInitOver(overCount);
-                } else {
-                    console.error(`plot manager init failed.`);
-                }
-            });
+            const initEntries: Array<IInitRequired> = [
+                BackgroundManager.instance,
+                AudioManager.instance,
+                CharacterManager.instance,
+                PlotManager.instance,
+            ];
+            for (let i = 0; i < initEntries.length; i++) {
+                const entry: IInitRequired = initEntries[i];
+                entry.init((err?: string) => {
+                    if (!err) {
+                        overCount++;
+                        this._onManagerInitOver(overCount, initEntries.length);
+                    } else {
+                        console.error(err);
+                    }
+                });
+            }
         } catch (e) {
             console.error(`ComLoading.onLoad: ${e}`);
         }
     }
 
-    private _onManagerInitOver(overCount: number): void {
-        if (overCount >= ComLoading.INIT_MANAGER_COUNT) {
+    private _onManagerInitOver(overCount: number, totalCount: number): void {
+        if (overCount >= totalCount) {
             cc.director.loadScene("title");
         }
     }

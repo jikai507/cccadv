@@ -14,7 +14,7 @@ export interface I2DVector {
 
 }
 
-export interface ITexture {
+export interface IImage {
     
     res: string;
 

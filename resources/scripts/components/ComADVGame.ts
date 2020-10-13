@@ -1,8 +1,11 @@
+import { IBackground, BackgroundManager } from "../Background";
 import { CharacterManager, ICharacter } from "../Character";
-import { IContent, IPlotAction, Plot, PlotManager } from "../Plot";
+import { IContent, IPlotAction, ISetBackground, Plot, PlotManager } from "../Plot";
 import { isNone } from "../Util";
 
 const {ccclass, property, menu} = cc._decorator;
+
+type ActionCallback = (err: string) => void;
 
 @ccclass("PlotProgress")
 class PlotProgress {
@@ -24,6 +27,9 @@ export class ComADVGame extends cc.Component {
 
     @property({ visible: true, type: cc.Sprite })
     private background: cc.Sprite = null;
+
+    @property({ visible: true, type: cc.RichText })
+    private placeNameTag: cc.RichText = null;
 
     @property({ visible: true, type: cc.Sprite })
     private character: cc.Sprite = null;
@@ -51,7 +57,7 @@ export class ComADVGame extends cc.Component {
 
     public onNewGame(): void {
         try {
-            const plot: Plot = PlotManager.instance.getPlot(PlotManager.BEGIN_PLOT_ID);
+            const plot: Plot = PlotManager.instance.get(PlotManager.BEGIN_PLOT_ID);
             this.progress.plotID = PlotManager.BEGIN_PLOT_ID;
             this.progress.actionIndex = 0;
             this.playPlot(plot);
@@ -73,13 +79,14 @@ export class ComADVGame extends cc.Component {
             
             switch (plotAction.type) {
             case "background":
+                this.showBackground(plotAction as ISetBackground, this.onActionCallback.bind(this));
                 break;
             case "bgm":
                 break;
             case "soundeffect":
                 break;
             case "content":
-                this.showContent(plotAction as IContent);
+                this.showContent(plotAction as IContent, this.onActionCallback.bind(this));
                 break;
             case "selection":
                 break;
@@ -89,17 +96,35 @@ export class ComADVGame extends cc.Component {
         }
     }
 
-    private showContent(content: IContent): void {
+    private showBackground(setBG: ISetBackground, callback: ActionCallback): void {
+        if (!setBG) {
+            return;
+        }
+        if (isNone(this.placeNameTag)) {
+            return;
+        }
+        const background: IBackground = BackgroundManager.instance.get(setBG.name);
+        if (isNone(background)) {
+            return;
+        }
+        
+    }
+
+    private showContent(content: IContent, callback: ActionCallback): void {
         if (!content) {
             return;
         }
         if (!isNone(content.character)) {
-            const character: ICharacter = CharacterManager.instance.getCharacter(content.character);
+            const character: ICharacter = CharacterManager.instance.get(content.character);
             console.info(character);
         }
         if (!isNone(content.text)) {
             this.plotText.string = content.text;
         }
+    }
+
+    private onActionCallback(): void {
+
     }
 
     public plotGoon(): void {
