@@ -1,3 +1,5 @@
+import { CharacterManager, ICharacter } from "../Character";
+
 const {ccclass, property, menu} = cc._decorator;
 
 @ccclass
@@ -10,8 +12,17 @@ export class ComADVGame extends cc.Component {
     @property({ visible: true, type: cc.Sprite })
     private character: cc.Sprite = null;
 
+    protected onLoad(): void {
+        try {
+
+        } catch (e) {
+            console.error(`ComADVGame.onLoad: ${e}`);
+        }
+    }
+
     protected start(): void {
-        console.info("ADV game start");
+        const char: ICharacter = CharacterManager.instance.getCharacter("xiao_wang");
+        console.info(char);
     }
     
 }

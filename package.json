@@ -4,6 +4,20 @@
     "description": "cocos creator extension to make ADV games.",
     "author": "jikai",
     "main": "main.js",
+    "main-menu": {
+        "cccadv/check/check plot": {
+            "message": "cccadv:check-plot"
+        },
+        "cccadv/check/check item": {
+            "message": "cccadv:check-item"
+        },
+        "cccadv/check/check property": {
+            "message": "cccadv:check-property"
+        },
+        "cccadv/check/check all": {
+            "message": "cccadv:check-all"
+        }
+    },
     "runtime-resource": {
         "path": "resources",
         "name": "resources"

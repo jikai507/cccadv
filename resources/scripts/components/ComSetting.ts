@@ -1,4 +1,5 @@
 import { DB } from "../DB";
+import { isBoolean, isNone } from "../Util";
 
 const {ccclass, property, menu} = cc._decorator;
 
@@ -37,7 +38,7 @@ export class ComSetting extends cc.Component {
     }
 
     public setLanguage(lang: Language): void {
-        if (undefined === lang || null === lang) {
+        if (isNone(lang)) {
             return;
         }
         this.language = lang;
@@ -48,7 +49,7 @@ export class ComSetting extends cc.Component {
     }
 
     public set muteMode(isMute: boolean) {
-        if (true === isMute || false === isMute) {
+        if (isBoolean(isMute)) {
             this.isMute = isMute;
         }
     }
@@ -68,7 +69,7 @@ export class ComSetting extends cc.Component {
     }
 
     public setVolumeOfBackgroundMusic(v: number): void {
-        if (undefined === v || null === v) {
+        if (isNone(v)) {
             return;
         }
         this.volumeOfBackgroundMusic = this.clampVolume(v);
@@ -80,7 +81,7 @@ export class ComSetting extends cc.Component {
     }
 
     public setVolumeOfSoundEffect(v: number): void {
-        if (undefined === v || null === v) {
+        if (isNone(v)) {
             return;
         }
         this.volumeOfSoundEffect = this.clampVolume(v);
@@ -92,7 +93,7 @@ export class ComSetting extends cc.Component {
     }
 
     public setVolumeOfVoice(v: number): void {
-        if (undefined === v || null === v) {
+        if (isNone(v)) {
             return;
         }
         this.volumeOfVoice = this.clampVolume(v);
@@ -120,7 +121,7 @@ export class ComSetting extends cc.Component {
     private load(): void {
         try {
             const setting: ISetting = DB.instance.get<ISetting>(ComSetting.DB_KEY);
-            if (undefined === setting || null === setting) {
+            if (isNone(setting)) {
                 return;
             }
             this.muteMode = setting.isMute;

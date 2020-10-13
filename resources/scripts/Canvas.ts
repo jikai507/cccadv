@@ -1,3 +1,5 @@
+import { isNone } from "./Util";
+
 export class Canvas {
 
     public static readonly SCENE_CANVAS_NAME: string = "Canvas";
@@ -9,15 +11,15 @@ export class Canvas {
     public getCurCanvas(): cc.Canvas {
         try {
             const scene: cc.Scene = cc.director.getScene();
-            if (undefined === scene || null === scene) {
+            if (isNone(scene)) {
                 throw `no scene?`;
             }
             const canvasNode: cc.Node = scene.getChildByName(Canvas.SCENE_CANVAS_NAME);
-            if (undefined === canvasNode || null === canvasNode) {
+            if (isNone(canvasNode)) {
                 throw `not found canvas node named "${Canvas.SCENE_CANVAS_NAME}".`;
             }
             const canvas: cc.Canvas = canvasNode.getComponent(cc.Canvas);
-            if (undefined === canvas || null === canvas) {
+            if (isNone(canvas)) {
                 throw `canvas node not have cc.Canvas component.`;
             }
             return canvas;

@@ -1,3 +1,5 @@
+import { isNone } from "../Util";
+
 const {ccclass, property, menu} = cc._decorator;
 
 @ccclass
@@ -21,7 +23,7 @@ export class ComArchive extends cc.Component {
     }
 
     public canUsePos(pos: number): boolean {
-        if (undefined === pos || null === pos) {
+        if (isNone(pos)) {
             return false;
         }
         return (0 <= pos && pos <= this.unlockedPos);

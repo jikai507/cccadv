@@ -1,3 +1,5 @@
+import { isNone } from "./Util";
+
 export class DB {
 
     public static readonly instance: DB = new DB();
@@ -10,7 +12,7 @@ export class DB {
                 throw `invalid entry to put.`;
             }
             const json: string = JSON.stringify(object);
-            if (undefined === json || null === json || json.length < "{}".length) {
+            if (isNone(json) || json.length < "{}".length) {
                 throw `stringify object failed.`;
             }
             cc.sys.localStorage.setItem(key, json);
@@ -25,11 +27,14 @@ export class DB {
                 return null;
             }
             const json: string = cc.sys.localStorage.getItem(key);
-            if (undefined === json || null === json) {
+            if (isNone(json)) {
                 return null;
             }
             const object: T = JSON.parse(json);
-            return (!object ? null : object);
+            if (isNone(object)) {
+                return null;
+            }
+            return object;
         } catch (e) {
             console.error(`DB.get: ${e}`);
             return null;
