@@ -1,5 +1,5 @@
 import { IImage, ILocaleText } from "./Interfaces";
-import { ResourceManager } from "./ResourceManager";
+import { ResourceData } from "./Resource";
 
 export interface IBackground {
 
@@ -9,14 +9,18 @@ export interface IBackground {
 
 }
 
-export class BackgroundManager extends ResourceManager<IBackground> {
+export class BackgroundManager extends ResourceData<IBackground> {
 
     public static readonly instance: BackgroundManager = new BackgroundManager();
 
-    protected resDataFile: string = "background";
+    protected readonly resDataFile: string = "background";
 
     private constructor() {
         super();
+    }
+
+    protected getResPaths(entry: IBackground): Array<string> {
+        return [entry.image.res];
     }
 
 }

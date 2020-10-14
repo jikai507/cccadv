@@ -1,4 +1,4 @@
-import { ITable } from "./Interfaces";
+import { ResourceData } from "./Resource";
 
 export interface IProperty {
 
@@ -8,12 +8,18 @@ export interface IProperty {
 
 }
 
-export class PropertyManager {
+export class PropertyManager extends ResourceData<IProperty> {
 
     public static readonly instance: PropertyManager = new PropertyManager();
 
-    private properties: ITable<IProperty> = {};
+    protected readonly resDataFile: string = "property";
 
-    private constructor() {}
+    private constructor() {
+        super();
+    }
+
+    protected getResPaths(entry: IProperty): Array<string> {
+        return [];
+    }
 
 }

@@ -1,11 +1,13 @@
 import { IBackground, BackgroundManager } from "../Background";
 import { CharacterManager, ICharacter } from "../Character";
+import { getTextByLanguage } from "../Language";
 import { IContent, IPlotAction, ISetBackground, Plot, PlotManager } from "../Plot";
-import { isNone } from "../Util";
+import { ResourceLoader } from "../Resource";
+import { isNone, safecall } from "../Util";
 
 const {ccclass, property, menu} = cc._decorator;
 
-type ActionCallback = (err: string) => void;
+type ActionCallback = (err?: Error) => void;
 
 @ccclass("PlotProgress")
 class PlotProgress {
@@ -17,7 +19,7 @@ class PlotProgress {
     public actionIndex: number = 0;
 
     @property({ visible: true })
-    public autoSave: boolean = false;
+    public autoSave: boolean = true;
 
 }
 
@@ -71,12 +73,12 @@ export class ComADVGame extends cc.Component {
             if (isNone(plot)) {
                 throw `invalid plot to play.`;
             }
+
             const plotAction: IPlotAction = plot[this.progress.actionIndex];
             if (isNone(plotAction)) {
                 throw `no action ${this.progress.actionIndex} in the plot.`;
             }
-            this.progress.actionIndex++;
-            
+
             switch (plotAction.type) {
             case "background":
                 this.showBackground(plotAction as ISetBackground, this.onActionCallback.bind(this));
@@ -100,14 +102,21 @@ export class ComADVGame extends cc.Component {
         if (!setBG) {
             return;
         }
-        if (isNone(this.placeNameTag)) {
-            return;
-        }
         const background: IBackground = BackgroundManager.instance.get(setBG.name);
         if (isNone(background)) {
             return;
         }
-        
+        if (this.placeNameTag) {
+            this.placeNameTag.string = getTextByLanguage(background.placeName);
+        }
+        ResourceLoader.instance.load(background.image.res, cc.SpriteFrame, (err: Error, asset: cc.SpriteFrame) => {
+            if (!isNone(err)) {
+                console.error(`ComADVGame.showBackground: ${err}`);
+                return;
+            }
+            this.background.spriteFrame = asset;
+            safecall(callback, null);
+        });
     }
 
     private showContent(content: IContent, callback: ActionCallback): void {
@@ -119,16 +128,26 @@ export class ComADVGame extends cc.Component {
             console.info(character);
         }
         if (!isNone(content.text)) {
-            this.plotText.string = content.text;
+            this.plotText.string = getTextByLanguage(content.text);
         }
     }
 
-    private onActionCallback(): void {
-
+    private onActionCallback(err?: Error): void {
+        if (isNone(err)) {
+            this.goon();
+        } else {
+            console.error(`ComADVGame.onActionCallback: ${err}`);
+        }
     }
 
-    public plotGoon(): void {
-        console.info("goon");
+    public goon(): void {
+        try {
+            const plot: Plot = PlotManager.instance.get(this.progress.plotID);
+            this.progress.actionIndex++;
+            this.playPlot(plot);
+        } catch (e) {
+            console.error(`ComADVGame.goon: ${e}`);
+        }
     }
     
 }

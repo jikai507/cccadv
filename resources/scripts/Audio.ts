@@ -1,17 +1,21 @@
-import { ResourceManager } from "./ResourceManager";
+import { ResourceData } from "./Resource";
 
 export interface IAudio {
 
 }
 
-export class AudioManager extends ResourceManager<IAudio> {
+export class AudioManager extends ResourceData<IAudio> {
 
     public static readonly instance: AudioManager = new AudioManager();
 
-    protected resDataFile: string = "audio";
+    protected readonly resDataFile: string = "audio";
 
     private constructor() {
         super();
+    }
+
+    protected getResPaths(entry: IAudio): Array<string> {
+        return [];
     }
 
     public play(clip: cc.AudioClip): void {

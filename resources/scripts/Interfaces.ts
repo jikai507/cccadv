@@ -1,5 +1,9 @@
 export interface IInitRequired {
-    init(over: (err?: string) => void): void;
+
+    init(over: (err?: Error) => void): void;
+
+    preload(over: (err?: Error) => void): number;
+
 }
 
 export interface ITable<T> {

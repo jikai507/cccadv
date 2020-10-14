@@ -1,15 +1,21 @@
-import { ITable } from "./Interfaces";
+import { ResourceData } from "./Resource";
 
 export interface IItem {
     readonly name: string;
 }
 
-export class ItemManager {
+export class ItemManager extends ResourceData<IItem> {
 
     public static readonly instance: ItemManager = new ItemManager();
 
-    private items: ITable<IItem> = {};
+    protected readonly resDataFile: string = "item";
 
-    private constructor() {}
+    private constructor() {
+        super();
+    }
+
+    protected getResPaths(entry: IItem): Array<string> {
+        return [];
+    }
 
 }
