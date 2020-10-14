@@ -1,5 +1,5 @@
 import { ILocaleText } from "./Interfaces";
-import { ResourceData } from "./Resource";
+import { IResPreloadEntry, ResourceData } from "./Resource";
 
 export type Plot = Array<IPlotAction>;
 
@@ -19,9 +19,17 @@ export interface IPlaySoundEffect extends IPlotAction {
     readonly name: string;
 }
 
+export interface IContextCharacter {
+
+    readonly name: string;
+
+    readonly pos: number;
+
+}
+
 export interface IContent extends IPlotAction {
 
-    readonly character?: string;
+    readonly character?: IContextCharacter;
 
     readonly text?: ILocaleText;
     
@@ -47,7 +55,7 @@ export class PlotManager extends ResourceData<Plot> {
         super();
     }
 
-    protected getResPaths(entry: Plot): Array<string> {
+    protected getResPreloadEntries(entry: Plot): Array<IResPreloadEntry> {
         return [];
     }
 

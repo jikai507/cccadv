@@ -1,6 +1,14 @@
 import { IInitRequired, ITable } from "./Interfaces";
 import { isNone, safecall } from "./Util";
 
+export interface IResPreloadEntry {
+
+    res: string;
+
+    type: typeof cc.Asset;
+
+}
+
 export abstract class ResourceData<T> implements IInitRequired {
 
     protected abstract readonly resDataFile: string;
@@ -43,32 +51,32 @@ export abstract class ResourceData<T> implements IInitRequired {
         }
     }
 
-    protected abstract getResPaths(entry: T): Array<string>;
+    protected abstract getResPreloadEntries(entry: T): Array<IResPreloadEntry>;
 
     public preload(over: (err?: Error) => void): number {
-        const allPaths: Array<string> = [];
+        const allPaths: Array<IResPreloadEntry> = [];
 
         for (let name in this.resEntries) {
             const entry: T = this.resEntries[name];
-            const paths: Array<string> = this.getResPaths(entry);
-            if (isNone(paths) || paths.length <= 0) {
+            const preloadEntries: Array<IResPreloadEntry> = this.getResPreloadEntries(entry);
+            if (isNone(preloadEntries) || preloadEntries.length <= 0) {
                 continue;
             }
-            allPaths.push(...paths);
+            allPaths.push(...preloadEntries);
         }
 
         for (let i = 0; i < allPaths.length; i++) {
-            const path: string = allPaths[i];
-            ResourceLoader.instance.load(path, cc.SpriteFrame, (err: Error, asset: cc.SpriteFrame) => {
+            const preloadEntry: IResPreloadEntry = allPaths[i];
+            ResourceLoader.instance.load(preloadEntry.res, preloadEntry.type, (err: Error, asset: cc.Asset) => {
                 if (!isNone(err)) {
-                    over(new Error(`${this.managerName}.preload: load res "${path}" error. ${err}`));
+                    over(new Error(`${this.managerName}.preload: load res "${preloadEntry.res}" error. ${err}`));
                     return;
                 }
                 if (!asset) {
-                    over(new Error(`${this.managerName}.preload: invalid asset loaded. path is "${path}".`));
+                    over(new Error(`${this.managerName}.preload: invalid asset loaded. path is "${preloadEntry.res}".`));
                     return;
                 }
-                console.debug(`${this.managerName}.preload: load "${path}" ok.`);
+                console.debug(`${this.managerName}.preload: load "${preloadEntry.res}" ok.`);
                 over();
             });
         }
@@ -92,7 +100,9 @@ export class ResourceLoader {
 
     private caches: ITable<IResourceCache> = {};
 
-    private constructor() {}
+    private constructor() {
+
+    }
 
     public load(path: string, type: typeof cc.Asset, onLoadEnd: (err: Error, asset: cc.Asset) => void) {
         const cache: IResourceCache = this.caches[path];

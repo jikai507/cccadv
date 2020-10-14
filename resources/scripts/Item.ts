@@ -1,4 +1,4 @@
-import { ResourceData } from "./Resource";
+import { IResPreloadEntry, ResourceData } from "./Resource";
 
 export interface IItem {
     readonly name: string;
@@ -14,7 +14,7 @@ export class ItemManager extends ResourceData<IItem> {
         super();
     }
 
-    protected getResPaths(entry: IItem): Array<string> {
+    protected getResPreloadEntries(entry: IItem): Array<IResPreloadEntry> {
         return [];
     }
 

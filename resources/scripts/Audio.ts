@@ -1,7 +1,7 @@
-import { ResourceData } from "./Resource";
+import { IResPreloadEntry, ResourceData } from "./Resource";
 
 export interface IAudio {
-
+    readonly res: string;
 }
 
 export class AudioManager extends ResourceData<IAudio> {
@@ -14,16 +14,11 @@ export class AudioManager extends ResourceData<IAudio> {
         super();
     }
 
-    protected getResPaths(entry: IAudio): Array<string> {
-        return [];
-    }
-
-    public play(clip: cc.AudioClip): void {
-        try {
-            cc.audioEngine.play(clip, true, 0);
-        } catch (e) {
-            console.error(`AudioManager.play: ${e}`);
-        }
+    protected getResPreloadEntries(entry: IAudio): Array<IResPreloadEntry> {
+        return [{
+            res: entry.res,
+            type: cc.AudioClip,
+        }];
     }
 
 }

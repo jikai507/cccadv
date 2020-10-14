@@ -1,5 +1,5 @@
 import { IImage, ILocaleText } from "./Interfaces";
-import { ResourceData } from "./Resource";
+import { IResPreloadEntry, ResourceData } from "./Resource";
 
 export interface IBackground {
 
@@ -18,9 +18,12 @@ export class BackgroundManager extends ResourceData<IBackground> {
     private constructor() {
         super();
     }
-
-    protected getResPaths(entry: IBackground): Array<string> {
-        return [entry.image.res];
+    
+    protected getResPreloadEntries(entry: IBackground): Array<IResPreloadEntry> {
+        return [{
+            res: entry.image.res,
+            type: cc.SpriteFrame,
+        }];
     }
 
 }

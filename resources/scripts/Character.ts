@@ -1,5 +1,5 @@
 import { ILocaleText, IImage } from "./Interfaces";
-import { ResourceData } from "./Resource";
+import { IResPreloadEntry, ResourceData } from "./Resource";
 
 export interface ICharacter {
 
@@ -19,8 +19,11 @@ export class CharacterManager extends ResourceData<ICharacter> {
         super();
     }
 
-    protected getResPaths(entry: ICharacter): Array<string> {
-        return [entry.image.res];
+    protected getResPreloadEntries(entry: ICharacter): Array<IResPreloadEntry> {
+        return [{
+            res: entry.image.res,
+            type: cc.SpriteFrame,
+        }];
     }
 
 }

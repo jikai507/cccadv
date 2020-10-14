@@ -1,4 +1,4 @@
-import { ResourceData } from "./Resource";
+import { IResPreloadEntry, ResourceData } from "./Resource";
 
 export interface IProperty {
 
@@ -18,7 +18,7 @@ export class PropertyManager extends ResourceData<IProperty> {
         super();
     }
 
-    protected getResPaths(entry: IProperty): Array<string> {
+    protected getResPreloadEntries(entry: IProperty): Array<IResPreloadEntry> {
         return [];
     }
 

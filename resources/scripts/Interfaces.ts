@@ -24,7 +24,7 @@ export interface IImage {
 
     pos: I2DVector;
 
-    size: I2DVector;
+    scale: I2DVector;
 
 }
 
