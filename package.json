@@ -5,18 +5,16 @@
     "author": "jikai",
     "main": "main.js",
     "main-menu": {
-        "cccadv/check/check plot": {
-            "message": "cccadv:check-plot"
-        },
-        "cccadv/check/check item": {
-            "message": "cccadv:check-item"
-        },
-        "cccadv/check/check property": {
-            "message": "cccadv:check-property"
-        },
-        "cccadv/check/check all": {
-            "message": "cccadv:check-all"
+        "cccadv/open editor": {
+            "message": "cccadv:open-editor"
         }
+    },
+    "panel": {
+        "main": "panel/editor.html",
+        "type": "simple",
+        "title": "ADV Editor",
+        "width": 800,
+        "height": 600
     },
     "runtime-resource": {
         "path": "resources",

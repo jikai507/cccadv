@@ -30,24 +30,6 @@ const BOILERPLATE_DIRS = [
     DATA_DIR,
 ];
 
-function checkPlot() {
-    
-}
-
-function checkItem() {
-
-}
-
-function checkProperty() {
-
-}
-
-function checkAll() {
-    checkProperty();
-    checkItem();
-    checkPlot();
-}
-
 module.exports = {
 
     load: function() {
@@ -77,10 +59,9 @@ module.exports = {
     unload: function() {},
 
     messages: {
-        "cccadv:check-plot": checkPlot,
-        "cccadv:check-item": checkItem,
-        "cccadv:check-property": checkProperty,
-        "cccadv:check-all": checkAll,
+        "open-editor": () => {
+            Editor.Panel.open("cccadv");
+        }
     },
 
 };
