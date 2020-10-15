@@ -19,20 +19,22 @@ export interface IPlaySoundEffect extends IPlotAction {
     readonly name: string;
 }
 
-export interface IContextCharacter {
+export interface IPlotCharacter {
 
     readonly name: string;
 
     readonly pos: number;
 
+    readonly dart?: boolean;
+
 }
 
 export interface IContent extends IPlotAction {
 
-    readonly character?: IContextCharacter;
+    readonly characters?: Array<IPlotCharacter>;
 
     readonly text?: ILocaleText;
-    
+
 }
 
 export interface ISellections extends IPlotAction {
@@ -41,6 +43,10 @@ export interface ISellections extends IPlotAction {
 
 export interface ICondition extends IPlotAction {
     
+}
+
+export interface IJumpToPlot extends IPlotAction {
+    readonly plotID: string;
 }
 
 export class PlotManager extends ResourceData<Plot> {

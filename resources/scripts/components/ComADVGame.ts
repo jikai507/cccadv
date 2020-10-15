@@ -19,6 +19,12 @@ class PlotProgress {
     @property({ visible: true, type: cc.Integer, min: 0 })
     public actionIndex: number = 0;
 
+    @property({ visible: false })
+    public background: ISetBackground = null;
+
+    @property({ visible: false })
+    public bgm: IPlayBGM = null;
+
     @property({ visible: true })
     public autoSave: boolean = true;
 
@@ -32,6 +38,26 @@ class CharacterPosition {
 
     @property({ visible: true })
     public flip: boolean = false;
+
+}
+
+@ccclass("ContextTextAnimation")
+class ContextTextAnim {
+
+    @property({ visible: true })
+    public isEnable: boolean = true;
+
+    @property({ visible: true })
+    public speed: number = 0.05;
+
+    @property({ visible: false })
+    public text: string = null;
+
+    @property({ visible: false })
+    public textIndex: number = 0;
+
+    @property({ visible: false })
+    public textTimer: number = 0;
 
 }
 
@@ -54,6 +80,9 @@ export class ComADVGame extends cc.Component {
     @property({ visible: true, type: cc.RichText })
     private plotText: cc.RichText = null;
 
+    @property({ visible: true, type: ContextTextAnim })
+    private contextTextAnim: ContextTextAnim = new ContextTextAnim();
+
     @property({ visible: true, type: PlotProgress })
     private progress: PlotProgress = new PlotProgress();
 
@@ -70,7 +99,18 @@ export class ComADVGame extends cc.Component {
         }
     }
 
-    protected start(): void {}
+    protected update(dt: number): void {
+        if (this.contextTextAnim.isEnable && !isNone(this.contextTextAnim.text)) {
+            this.contextTextAnim.textTimer += dt;
+            if (this.contextTextAnim.textTimer >= this.contextTextAnim.speed) {
+                this.contextTextAnim.textTimer -= this.contextTextAnim.speed;
+                this.plotText.string += this.contextTextAnim.text[this.contextTextAnim.textIndex++];
+                if (this.contextTextAnim.textIndex >= this.contextTextAnim.text.length) {
+                    this.contextTextAnim.text = null;
+                }
+            }
+        }
+    }
 
     public onNewGame(): void {
         try {
@@ -116,12 +156,13 @@ export class ComADVGame extends cc.Component {
 
     private showBackground(setBG: ISetBackground, callback: ActionCallback): void {
         if (!setBG) {
-            safecall(callback, new Error(`ComADVGame.showBackground: invalid background to show.`));
+            safecall(callback, true, new Error(`ComADVGame.showBackground: invalid background to show.`));
             return;
         }
+        this.progress.background = setBG;
         const background: IBackground = BackgroundManager.instance.get(setBG.name);
         if (isNone(background)) {
-            safecall(callback, new Error(`ComADVGame.showBackground: not found background "${setBG.name}".`));
+            safecall(callback, true, new Error(`ComADVGame.showBackground: not found background "${setBG.name}".`));
             return;
         }
         if (this.placeNameTag) {
@@ -129,7 +170,7 @@ export class ComADVGame extends cc.Component {
         }
         ResourceLoader.instance.load(background.image.res, cc.SpriteFrame, (err: Error, asset: cc.SpriteFrame) => {
             if (!isNone(err)) {
-                safecall(callback, new Error(`ComADVGame.showBackground: ${err}`));
+                safecall(callback, true, new Error(`ComADVGame.showBackground: ${err}`));
                 return;
             }
             this.background.spriteFrame = asset;
@@ -141,33 +182,34 @@ export class ComADVGame extends cc.Component {
                 background.image.scale.x,
                 background.image.scale.y,
             ));
-            safecall(callback, null);
+            safecall(callback, true, null);
         });
     }
 
     private playBGM(bgm: IPlayBGM, callback: ActionCallback): void {
         if (!bgm) {
-            safecall(callback, new Error(`ComADVGame.playBGM: invalid BGM to play.`));
+            safecall(callback, true, new Error(`ComADVGame.playBGM: invalid BGM to play.`));
             return;
         }
+        this.progress.bgm = bgm;
         const audio: IAudio = AudioManager.instance.get(bgm.name);
         if (isNone(audio)) {
-            safecall(callback, new Error(`ComADVGame.playBGM: not found audio "${bgm.name}".`));
+            safecall(callback, true, new Error(`ComADVGame.playBGM: not found audio "${bgm.name}".`));
             return;
         }
         ResourceLoader.instance.load(audio.res, cc.AudioClip, (err: Error, clip: cc.AudioClip) => {
             if (!isNone(err)) {
-                safecall(callback, new Error(`ComADVGame.playBGM: ${err}`));
+                safecall(callback, true, new Error(`ComADVGame.playBGM: ${err}`));
                 return;
             }
             cc.audioEngine.playMusic(clip, true);
-            safecall(callback, null);
+            safecall(callback, true, null);
         });
     }
 
     private showContent(content: IContent, callback: ActionCallback): void {
         if (!content) {
-            safecall(callback, new Error(`ComADVGame.showContent: invalid plot text content to show.`));
+            safecall(callback, false, new Error(`ComADVGame.showContent: invalid plot text content to show.`));
             return;
         }
 
@@ -178,7 +220,7 @@ export class ComADVGame extends cc.Component {
             }
             ResourceLoader.instance.load(character.image.res, cc.SpriteFrame, (err: Error, asset: cc.SpriteFrame) => {
                 if (!isNone(err)) {
-                    safecall(callback, new Error(`ComADVGame.showContent: ${err}`));
+                    safecall(callback, false, new Error(`ComADVGame.showContent: ${err}`));
                     return;
                 }
                 const characterPos: CharacterPosition = this.characterPosList[content.character.pos];
@@ -191,20 +233,30 @@ export class ComADVGame extends cc.Component {
                     character.image.scale.x,
                     character.image.scale.y,
                 ));
-                safecall(callback, null);
+                safecall(callback, false, null);
             });
         }
 
         if (!isNone(content.text)) {
-            this.plotText.string = getTextByLanguage(content.text);
+            const text: string = getTextByLanguage(content.text);
+            if (this.contextTextAnim.isEnable) {
+                this.contextTextAnim.text = text;
+                this.contextTextAnim.textIndex = 0;
+                this.contextTextAnim.textTimer = 0;
+                this.plotText.string = "";
+            } else {
+                this.plotText.string = text;
+            }
         }
     }
 
-    private onActionCallback(err?: Error): void {
-        if (isNone(err)) {
-            this.goon();
-        } else {
+    private onActionCallback(autoGoon: boolean, err?: Error): void {
+        if (!isNone(err)) {
             console.error(`ComADVGame.onActionCallback: ${err}`);
+            autoGoon = true;
+        }
+        if (autoGoon === true) {
+            this.goon();
         }
     }
 
