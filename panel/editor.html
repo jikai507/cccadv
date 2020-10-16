@@ -2,34 +2,60 @@
     <head>
         <title>ADV Editor</title>
         <meta charset="utf-8"/>
-        <link href="./editor.css" rel="stylesheet" type="text/css"/>
+
+        <link rel="stylesheet" href="Semantic-UI-CSS-master/semantic.min.css">
+        <link rel="stylesheet" href="editor.css">
     </head>
 
     <body>
-        <div class="layout vertical max-width">
-            <div class="tabs max-width">
-                <ui-dock-tabs>
-                    <ui-dock-tab>
-                        剧情
-                    </ui-dock-tab>
-                    <ui-dock-tab>
-                        <div class="inner">
-                            <div class="title">
-                                <span>背景</span>
+        <div id="root-div">
+            <div id="header-panel" class="ui top attached tabular menu">
+                <a class="item active">剧情</a>
+                <a class="item">立绘</a>
+                <a class="item">背景</a>
+                <a class="item">物品</a>
+                <a class="item">属性</a>
+                <div class="right menu">
+                    <div class="item">
+                        <div class="ui compact selection dropdown">
+                            <i class="dropdown icon"></i>
+                            <div class="text">中文</div>
+                            <div class="menu">
+                                <div class="item">中文</div>
+                                <div class="item">英文</div>
                             </div>
                         </div>
-                    </ui-dock-tab>
-                    <ui-dock-tab>
-                        <div class="inner">
-                            <div class="title">
-                                <span>立绘</span>
-                            </div>
+                    </div>
+                </div>
+            </div>
+            <div id="content-panel" class="ui bottom attached segment">
+                <div id="id-panel" class="ui vertical menu">
+                    <div class="item">
+                        <div class="ui transparent icon input">
+                            <input type="text" placeholder="搜索数据ID...">
+                            <i class="search link icon"></i>
                         </div>
-                    </ui-dock-tab>
-                </ui-dock-tabs>
+                    </div>
+                    <div class="item">
+                    </div>
             </div>
         </div>
 
-        <script src="./editor.js"></script>
+        <!-- must need this snippet to import jQuery to the electron -->
+        <script>
+            if (typeof module === "object") {
+                window.module = module;
+                module = undefined;
+            }
+        </script>
+        <script src="jquery/jquery.min.js"></script>    
+        <script src="Semantic-UI-CSS-master/semantic.min.js"></script>    
+        <script src="editor.js"></script>
+        <script>
+            if (window.module) {
+                module = window.module;
+            }
+            updateContentPanelSize();
+        </script>
     </body>
 </html>
