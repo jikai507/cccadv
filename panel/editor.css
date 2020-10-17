@@ -9,15 +9,31 @@ body {
     height: 100%;
 }
 
-#id-panel {
-    width: 200px;
-    height: 100%;
-    top: 0px;
-    bottom: 0px;
-}
-
 #content-panel {
     width: 100%;
+}
+
+#content-segments {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+}
+
+#id-segment {
+    width: 215px;
+    min-width: 215px;
+    max-width: 215px;
+    height: 100%;
+}
+
+.id-item {
+    width: 100%;
+}
+
+#data-segment {
+    width: 100%;
+    height: 100%;
 }
 
 .max-width {

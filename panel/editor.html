@@ -3,41 +3,48 @@
         <title>ADV Editor</title>
         <meta charset="utf-8"/>
 
-        <link rel="stylesheet" href="Semantic-UI-CSS-master/semantic.min.css">
+        <link rel="stylesheet" href="semantic/semantic.min.css">
         <link rel="stylesheet" href="editor.css">
     </head>
 
     <body>
         <div id="root-div">
             <div id="header-panel" class="ui top attached tabular menu">
-                <a class="item active">剧情</a>
-                <a class="item">立绘</a>
-                <a class="item">背景</a>
-                <a class="item">物品</a>
-                <a class="item">属性</a>
+                <a id="plot-tab" class="item active" onclick="onSwitchDataCategory('plot')">剧情</a>
+                <a id="character-tab" class="item" onclick="onSwitchDataCategory('character')">立绘</a>
+                <a id="background-tab" class="item" onclick="onSwitchDataCategory('background')">背景</a>
+                <a id="audio-tab" class="item" onclick="onSwitchDataCategory('audio')">声音</a>
+                <a id="item-tab" class="item" onclick="onSwitchDataCategory('item')">物品</a>
+                <a id="property-tab" class="item" onclick="onSwitchDataCategory('property')">属性</a>
                 <div class="right menu">
                     <div class="item">
-                        <div class="ui compact selection dropdown">
+                        <div class="ui dropdown"> 
                             <i class="dropdown icon"></i>
-                            <div class="text">中文</div>
-                            <div class="menu">
-                                <div class="item">中文</div>
-                                <div class="item">英文</div>
+                            <div class="menu" value="0">
+                                <div class="item" value="0">中文</div>
+                                <div class="item" value="1">英文</div>
                             </div>
-                        </div>
+                         </div>
                     </div>
                 </div>
             </div>
+
             <div id="content-panel" class="ui bottom attached segment">
-                <div id="id-panel" class="ui vertical menu">
-                    <div class="item">
-                        <div class="ui transparent icon input">
-                            <input type="text" placeholder="搜索数据ID...">
-                            <i class="search link icon"></i>
+                <div id="content-segments" class="ui horizontal segments max-height">
+                    <div id="id-segment" class="ui compact segment">
+                        <div class="item id-item">
+                            <div class="ui transparent icon input">
+                                <input type="text" placeholder="搜索数据ID...">
+                                <i class="search link icon"></i>
+                            </div>
+                        </div>
+                        <div class="item id-item">
                         </div>
                     </div>
-                    <div class="item">
+                    <div id="data-segment" class="ui segment">
+
                     </div>
+                </div>
             </div>
         </div>
 
@@ -49,7 +56,7 @@
             }
         </script>
         <script src="jquery/jquery.min.js"></script>    
-        <script src="Semantic-UI-CSS-master/semantic.min.js"></script>    
+        <script src="semantic/semantic.min.js"></script>    
         <script src="editor.js"></script>
         <script>
             if (window.module) {
