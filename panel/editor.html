@@ -10,21 +10,22 @@
     <body>
         <div id="root-div">
             <div id="header-panel" class="ui top attached tabular menu">
-                <a id="plot-tab" class="item active" onclick="onSwitchDataCategory('plot')">剧情</a>
-                <a id="character-tab" class="item" onclick="onSwitchDataCategory('character')">立绘</a>
-                <a id="background-tab" class="item" onclick="onSwitchDataCategory('background')">背景</a>
-                <a id="audio-tab" class="item" onclick="onSwitchDataCategory('audio')">声音</a>
-                <a id="item-tab" class="item" onclick="onSwitchDataCategory('item')">物品</a>
-                <a id="property-tab" class="item" onclick="onSwitchDataCategory('property')">属性</a>
+                <a id="plot-tab" class="item active" onclick="switchDataCategory('plot')">剧情</a>
+                <a id="character-tab" class="item" onclick="switchDataCategory('character')">立绘</a>
+                <a id="background-tab" class="item" onclick="switchDataCategory('background')">背景</a>
+                <a id="audio-tab" class="item" onclick="switchDataCategory('audio')">声音</a>
+                <a id="item-tab" class="item" onclick="switchDataCategory('item')">物品</a>
+                <a id="property-tab" class="item" onclick="switchDataCategory('property')">属性</a>
                 <div class="right menu">
                     <div class="item">
-                        <div class="ui dropdown"> 
+                        <div class="ui compact selection dropdown">
                             <i class="dropdown icon"></i>
-                            <div class="menu" value="0">
-                                <div class="item" value="0">中文</div>
-                                <div class="item" value="1">英文</div>
+                            <div class="text">中文</div>
+                            <div class="menu">
+                                <div id="language-zh" class="item">中文</div>
+                                <div id="language-en" class="item">英文</div>
                             </div>
-                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
