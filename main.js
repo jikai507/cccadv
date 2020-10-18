@@ -30,6 +30,19 @@ const BOILERPLATE_DIRS = [
     DATA_DIR,
 ];
 
+function readDataFile(category) {
+    Editor.assetdb.queryAssets(`db://assets/resources/data/${category}.json`, "json", function (err, results) {
+        if (err) {
+            Editor.error(`readDataFile: ${err}`);
+            return;
+        }
+        results.forEach(function (result) {
+            const json = fs.readFileSync(result.path).toString();
+            Editor.log(json);
+        });
+    });
+}
+
 module.exports = {
 
     load: function() {
@@ -59,9 +72,13 @@ module.exports = {
     unload: function() {},
 
     messages: {
-        "open-editor": () => {
+        "cccadv:open-editor": () => {
             Editor.Panel.open("cccadv");
-        }
+        },
+
+        "cccadv:load-data-to-editor": (event, category) => {
+            readDataFile(category);
+        },
     },
 
 };

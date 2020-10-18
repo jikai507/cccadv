@@ -34,11 +34,59 @@ function switchDataCategory(category) {
     }
     advEditorContext["cur-data-category"] = category
     localStorage.setItem("data-category", category);
+    loadData(category);
 }
 
 function switchLanguage(language) {
     advEditorContext["cur-language"] = language;
     localStorage.setItem("language", language);
+}
+
+function loadData(category) {
+    try {
+        Editor.Ipc.sendToMain("cccadv:load-data-to-editor", category, function (err, answer) {
+            if (err) {
+                console.error(`loadData: ${err}`);
+                return;
+            }
+            switch (category) {
+            case "plot":
+                break;
+            case "character":
+                break;
+            case "background":
+                break;
+            case "audio":
+                break;
+            case "item":
+                break;
+            case "property":
+                break;
+            default:
+                console.error(`loadData: unknown data category "${category}".`);
+                break;
+            }
+        });
+    } catch (e) {
+        console.error(`loadData: ${e}`);
+    }
+}
+
+
+function popIDMenu() {
+    try {
+
+    } catch (e) {
+        console.error(`popIDMenu: ${e}`);
+    }
+}
+
+function popDataMenu() {
+    try {
+
+    } catch (e) {
+        console.error(`popDataMenu: ${e}`);
+    }
 }
 
 function onInitEditor() {
