@@ -1,8 +1,8 @@
 const advEditorContext = {};
 
 const LANGUAGE = {
-    ZH: "chinese",
-    EN: "english",
+    ZH: "0",
+    EN: "1",
 };
 
 function updateContentPanelSize() {
@@ -33,18 +33,28 @@ function switchDataCategory(category) {
         }
     }
     advEditorContext["cur-data-category"] = category
+    localStorage.setItem("data-category", category);
 }
 
 function switchLanguage(language) {
     advEditorContext["cur-language"] = language;
+    localStorage.setItem("language", language);
 }
 
 function onInitEditor() {
+    try {
+        const dataCategory = localStorage.getItem("data-category");
+        switchDataCategory(!dataCategory ? "plot" : dataCategory);
 
+        const language = localStorage.getItem("language");
+        $("#language-option").dropdown("set selected", language);
+    } catch (e) {
+        console.error(`onInitEditor: ${e}`);
+    }
 }
 
 function main() {
-    $('.ui.dropdown').dropdown({
+    $("#language-option").dropdown({
         onChange: function(value, text, items) {
             switch (items[0].id) {
             case "language-zh":
