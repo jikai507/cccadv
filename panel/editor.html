@@ -26,25 +26,32 @@
                                 <div id="language-en" class="item" data-value="1">英文</div>
                             </div>
                         </div>
+                        <button id="save-btn" class="ui primary button" onclick="saveData();">保存</button>
                     </div>
                 </div>
             </div>
 
             <div id="content-panel" class="ui bottom attached segment">
                 <div id="content-segments" class="ui horizontal segments max-height">
-                    <div id="id-segment" class="ui compact segment" oncontextmenu="popMenu();">
-                        <div class="item id-item">
+                    <div id="id-segment" class="ui compact segment" oncontextmenu="popIDMenu();">
+                        <div class="item id-search">
                             <div class="ui transparent icon input">
                                 <input type="text" placeholder="搜索数据ID...">
                                 <i class="search link icon"></i>
                             </div>
                         </div>
-                        <div class="item id-item">
+                        <div id="id-list" class="ui link list">
                         </div>
                     </div>
                     <div id="data-segment" class="ui segment" oncontextmenu="popDataMenu();">
 
                     </div>
+                </div>
+            </div>
+
+            <div id="#msg-box" class="ui card">
+                <div class="content">
+                    <div class="description">保存成功</div>
                 </div>
             </div>
         </div>

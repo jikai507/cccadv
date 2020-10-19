@@ -6,6 +6,8 @@ const RES_DIR = "assets/resources";
 
 const DATA_DIR = `${RES_DIR}/data`;
 
+const DATA_FILE_ENCODING = "utf-8";
+
 const DATA_FILES = [
     `${DATA_DIR}/background.json`,
     `${DATA_DIR}/audio.json`,
@@ -30,17 +32,36 @@ const BOILERPLATE_DIRS = [
     DATA_DIR,
 ];
 
-function readDataFile(category) {
-    Editor.assetdb.queryAssets(`db://assets/resources/data/${category}.json`, "json", function (err, results) {
-        if (err) {
-            Editor.error(`readDataFile: ${err}`);
-            return;
+function getDataFile(category) {
+    return `${Editor.Project.path}/assets/resources/data/${category}.json`;
+}
+
+function readDataFile(event, category) {
+    try {
+        const filePath = getDataFile(category);
+        const dataJSON = fs.readFileSync(filePath, { encoding: DATA_FILE_ENCODING }).toString();
+        const data = JSON.parse(dataJSON);
+        if (event && event.reply) {
+            event.reply(null, data);
         }
-        results.forEach(function (result) {
-            const json = fs.readFileSync(result.path).toString();
-            Editor.log(json);
-        });
-    });
+    } catch (e) {
+        console.error(`readDataFile: ${e}`);
+    }
+}
+
+function saveDataFile(event, data) {
+    try {
+        for (let category in data) {
+            const filePath = getDataFile(category);
+            const dataJSON = JSON.stringify(data[category]);
+            fs.writeFileSync(filePath, dataJSON, { encoding: DATA_FILE_ENCODING });
+        }
+        if (event && event.reply) {
+            event.reply(null, "ok");
+        }
+    } catch (e) {
+        Editor.error(`saveDataFile: ${e}`);
+    }
 }
 
 module.exports = {
@@ -77,7 +98,11 @@ module.exports = {
         },
 
         "cccadv:load-data-to-editor": (event, category) => {
-            readDataFile(category);
+            readDataFile(event, category);
+        },
+
+        "cccadv:save-data-by-editor": (event, data) => {
+            saveDataFile(event, data);
         },
     },
 

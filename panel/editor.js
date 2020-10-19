@@ -1,4 +1,7 @@
-const advEditorContext = {};
+const advEditorContext = {
+    data: {},
+    modified: false,
+};
 
 const LANGUAGE = {
     ZH: "0",
@@ -44,38 +47,75 @@ function switchLanguage(language) {
 
 function loadData(category) {
     try {
-        Editor.Ipc.sendToMain("cccadv:load-data-to-editor", category, function (err, answer) {
+        Editor.Ipc.sendToMain("cccadv:load-data-to-editor", category, (err, answer) => {
             if (err) {
                 console.error(`loadData: ${err}`);
                 return;
             }
-            switch (category) {
-            case "plot":
-                break;
-            case "character":
-                break;
-            case "background":
-                break;
-            case "audio":
-                break;
-            case "item":
-                break;
-            case "property":
-                break;
-            default:
-                console.error(`loadData: unknown data category "${category}".`);
-                break;
-            }
+            onLoadDataEnd(answer, category);
         });
     } catch (e) {
         console.error(`loadData: ${e}`);
     }
 }
 
+function onLoadDataEnd(data, category) {
+    advEditorContext.data[category] = data;
+    const idList = document.getElementById("id-list");
+    idList.innerHTML = "";
+    for (let id in data) {
+        const idEntry = document.createElement("a");
+        idEntry.className = "item";
+        idEntry.innerHTML = id;
+        idEntry.onclick = () => onClickDataID(id);
+        idList.appendChild(idEntry);
+    }
+
+    switch (category) {
+    case "plot":
+        break;
+    case "character":
+        break;
+    case "background":
+        break;
+    case "audio":
+        break;
+    case "item":
+        break;
+    case "property":
+        break;
+    default:
+        console.error(`onLoadDataEnd: unknown data category "${category}".`);
+        break;
+    }
+}
+
+function onClickDataID(id) {
+    const category = advEditorContext["cur-data-category"];
+    const dataEntry = advEditorContext.data[category][id];
+    // TODO: handle data entry here ...
+}
+
+function saveData() {
+    try {
+        Editor.Ipc.sendToMain("cccadv:save-data-by-editor", advEditorContext.data, (err, answer) => {
+            if (err) {
+                console.error(`saveData: ${err}`);
+                return;
+            }
+            if (answer === "ok") {
+                advEditorContext.modified = false;
+                alert("保存完毕");
+            }
+        });
+    } catch (e) {
+        console.error(`saveData: ${e}`);
+    }
+}
 
 function popIDMenu() {
     try {
-
+        
     } catch (e) {
         console.error(`popIDMenu: ${e}`);
     }
