@@ -113,19 +113,55 @@ function saveData() {
     }
 }
 
-function popIDMenu() {
-    try {
-        
-    } catch (e) {
-        console.error(`popIDMenu: ${e}`);
+function hideAllPopMenus() {
+    const popLayer = document.getElementById("pop-layer");
+    for (let i = 0; i < popLayer.children.length; i++) {
+        popLayer.children[i].style.visibility = "hidden";
     }
 }
 
-function popDataMenu() {
+function popMenu(menuID) {
     try {
+        hideAllPopMenus();
 
+        const popMenu = document.getElementById(menuID);
+        popMenu.style.visibility = "visible";
+        popMenu = event.clientX+document.body.scrollLeft;//鼠标x位置
+        popMenu = event.clientY+document.body.scrollTop;//鼠标y位置
+
+        const popLayer = document.getElementById("pop-layer");
+        popLayer.style.visibility = "visible";
     } catch (e) {
-        console.error(`popDataMenu: ${e}`);
+        console.error(e);
+    }
+}
+
+function popMenuByDataCategory() {
+    try {
+        const category = advEditorContext["cur-data-category"];
+        if ("plot" === category) {
+            popMenu("plot-pop-menu");
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function popNewDataEntryDialog() {
+    
+}
+
+function popNewPlotEntryDialog() {
+
+}
+
+function closePopLayer() {
+    try {
+        hideAllPopMenus();
+        const popLayer = document.getElementById("pop-layer");
+        popLayer.style.visibility = "hidden";
+    } catch (e) {
+        console.error(`closePopLayer: ${e}`);
     }
 }
 

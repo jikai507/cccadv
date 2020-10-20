@@ -33,7 +33,7 @@
 
             <div id="content-panel" class="ui bottom attached segment">
                 <div id="content-segments" class="ui horizontal segments max-height">
-                    <div id="id-segment" class="ui compact segment" oncontextmenu="popIDMenu();">
+                    <div id="id-segment" class="ui compact segment" oncontextmenu="popMenu('id-pop-menu');">
                         <div class="item id-search">
                             <div class="ui transparent icon input">
                                 <input type="text" placeholder="搜索数据ID...">
@@ -43,15 +43,30 @@
                         <div id="id-list" class="ui link list">
                         </div>
                     </div>
-                    <div id="data-segment" class="ui segment" oncontextmenu="popDataMenu();">
+                    <div id="data-segment" class="ui segment" oncontextmenu="popMenuByDataCategory();">
 
                     </div>
                 </div>
             </div>
 
-            <div id="#msg-box" class="ui card">
+            <div id="msg-box" class="ui card">
                 <div class="content">
                     <div class="description">保存成功</div>
+                </div>
+            </div>
+
+            <div id="pop-layer" onclick="closePopLayer();">
+                <div id="id-pop-menu" class="ui vertical compact menu pop-menu">
+                    <a class="item" onclick="popNewDataEntryDialog();">
+                        <i class="plus icon"></i>
+                        新建
+                    </a>
+                </div>
+                <div id="plot-pop-menu" class="ui vertical compact menu pop-menu">
+                    <a class="item" onclick="popNewPlotEntryDialog();">
+                        <i class="plus icon"></i>
+                        新建
+                    </a>
                 </div>
             </div>
         </div>
