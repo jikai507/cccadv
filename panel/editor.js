@@ -64,11 +64,7 @@ function onLoadDataEnd(data, category) {
     const idList = document.getElementById("id-list");
     idList.innerHTML = "";
     for (let id in data) {
-        const idEntry = document.createElement("a");
-        idEntry.className = "item";
-        idEntry.innerHTML = id;
-        idEntry.onclick = () => onClickDataID(id);
-        idList.appendChild(idEntry);
+        addIDView(idList, id);
     }
 
     switch (category) {
@@ -90,7 +86,15 @@ function onLoadDataEnd(data, category) {
     }
 }
 
-function onClickDataID(id) {
+function addIDView(idList, id) {
+    const idEntry = document.createElement("a");
+    idEntry.className = "item";
+    idEntry.innerHTML = id;
+    idEntry.onclick = () => showData(id);
+    idList.appendChild(idEntry);
+}
+
+function showData(id) {
     const category = advEditorContext["cur-data-category"];
     const dataEntry = advEditorContext.data[category][id];
     // TODO: handle data entry here ...
@@ -120,14 +124,14 @@ function hideAllPopMenus() {
     }
 }
 
-function popMenu(menuID) {
+function popMenu(menuID, x, y) {
     try {
         hideAllPopMenus();
 
         const popMenu = document.getElementById(menuID);
         popMenu.style.visibility = "visible";
-        popMenu = event.clientX+document.body.scrollLeft;//鼠标x位置
-        popMenu = event.clientY+document.body.scrollTop;//鼠标y位置
+        popMenu.style.left = `${x}px`;
+        popMenu.style.top = `${y}px`;
 
         const popLayer = document.getElementById("pop-layer");
         popLayer.style.visibility = "visible";
@@ -190,6 +194,38 @@ function main() {
             }
         },
     });
+
+    $("#plot-tab")[0].onclick = (event) => {
+        switchDataCategory("plot");
+    };
+
+    $("#character-tab")[0].onclick = (event) => {
+        switchDataCategory("character");
+    };
+
+    $("#background-tab")[0].onclick = (event) => {
+        switchDataCategory("background");
+    };
+
+    $("#audio-tab")[0].onclick = (event) => {
+        switchDataCategory("audio");
+    };
+
+    $("#item-tab")[0].onclick = (event) => {
+        switchDataCategory("item");
+    };
+
+    $("#property-tab")[0].onclick = (event) => {
+        switchDataCategory("property");
+    };
+
+    $("#id-segment")[0].oncontextmenu = (event) => {
+        popMenu("id-pop-menu", event.clientX, event.clientY);
+    };
+
+    $("#data-segment")[0].oncontextmenu = (event) => {
+        popMenu("plot-pop-menu", event.clientX, event.clientY);
+    };
 
     onInitEditor();
 }

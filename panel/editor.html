@@ -10,12 +10,12 @@
     <body>
         <div id="root-div">
             <div id="header-panel" class="ui top attached tabular menu">
-                <a id="plot-tab" class="item active" onclick="switchDataCategory('plot')">剧情</a>
-                <a id="character-tab" class="item" onclick="switchDataCategory('character')">立绘</a>
-                <a id="background-tab" class="item" onclick="switchDataCategory('background')">背景</a>
-                <a id="audio-tab" class="item" onclick="switchDataCategory('audio')">声音</a>
-                <a id="item-tab" class="item" onclick="switchDataCategory('item')">物品</a>
-                <a id="property-tab" class="item" onclick="switchDataCategory('property')">属性</a>
+                <a id="plot-tab" class="item">剧情</a>
+                <a id="character-tab" class="item">立绘</a>
+                <a id="background-tab" class="item">背景</a>
+                <a id="audio-tab" class="item">声音</a>
+                <a id="item-tab" class="item">物品</a>
+                <a id="property-tab" class="item">属性</a>
                 <div class="right menu">
                     <div class="item">
                         <div id="language-option" class="ui compact selection dropdown">
@@ -33,7 +33,7 @@
 
             <div id="content-panel" class="ui bottom attached segment">
                 <div id="content-segments" class="ui horizontal segments max-height">
-                    <div id="id-segment" class="ui compact segment" oncontextmenu="popMenu('id-pop-menu');">
+                    <div id="id-segment" class="ui compact segment">
                         <div class="item id-search">
                             <div class="ui transparent icon input">
                                 <input type="text" placeholder="搜索数据ID...">
@@ -43,7 +43,7 @@
                         <div id="id-list" class="ui link list">
                         </div>
                     </div>
-                    <div id="data-segment" class="ui segment" oncontextmenu="popMenuByDataCategory();">
+                    <div id="data-segment" class="ui segment">
 
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                 <div id="plot-pop-menu" class="ui vertical compact menu pop-menu">
                     <a class="item" onclick="popNewPlotEntryDialog();">
                         <i class="plus icon"></i>
-                        新建
+                        新建剧情流程
                     </a>
                 </div>
             </div>
