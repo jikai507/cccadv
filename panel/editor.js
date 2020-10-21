@@ -88,9 +88,21 @@ function onLoadDataEnd(data, category) {
 
 function addIDView(idList, id) {
     const idEntry = document.createElement("a");
-    idEntry.className = "item";
-    idEntry.innerHTML = id;
-    idEntry.onclick = () => showData(id);
+    idEntry.className = "item id-entry";
+
+    const span = document.createElement("div");
+    span.style.width = "100%";
+    span.innerHTML = id;
+    span.onmouseup = (event) => {
+        showData(id);
+        event.stopPropagation();
+    };
+    span.oncontextmenu = (event) => {
+        popMenu("id-pop-menu", event.clientX, event.clientY);
+        event.stopPropagation();
+    };
+
+    idEntry.appendChild(span);
     idList.appendChild(idEntry);
 }
 
@@ -197,34 +209,42 @@ function main() {
 
     $("#plot-tab")[0].onclick = (event) => {
         switchDataCategory("plot");
+        event.stopPropagation();
     };
 
     $("#character-tab")[0].onclick = (event) => {
         switchDataCategory("character");
+        event.stopPropagation();
     };
 
     $("#background-tab")[0].onclick = (event) => {
         switchDataCategory("background");
+        event.stopPropagation();
     };
 
     $("#audio-tab")[0].onclick = (event) => {
         switchDataCategory("audio");
+        event.stopPropagation();
     };
 
     $("#item-tab")[0].onclick = (event) => {
         switchDataCategory("item");
+        event.stopPropagation();
     };
 
     $("#property-tab")[0].onclick = (event) => {
         switchDataCategory("property");
+        event.stopPropagation();
     };
 
     $("#id-segment")[0].oncontextmenu = (event) => {
-        popMenu("id-pop-menu", event.clientX, event.clientY);
+        popMenu("id-segment-pop-menu", event.clientX, event.clientY);
+        event.stopPropagation();
     };
 
     $("#data-segment")[0].oncontextmenu = (event) => {
-        popMenu("plot-pop-menu", event.clientX, event.clientY);
+        popMenu("plot-segment-pop-menu", event.clientX, event.clientY);
+        event.stopPropagation();
     };
 
     onInitEditor();

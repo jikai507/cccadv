@@ -41,6 +41,14 @@
                             </div>
                         </div>
                         <div id="id-list" class="ui link list">
+
+                            <!-- example -->
+                            <a class="item">
+                                <div class="ui transparent input">
+                                    <input type="text" placeholder="haha">
+                                </div>
+                            </a>
+
                         </div>
                     </div>
                     <div id="data-segment" class="ui segment">
@@ -56,16 +64,26 @@
             </div>
 
             <div id="pop-layer" onclick="closePopLayer();">
-                <div id="id-pop-menu" class="ui vertical compact menu pop-menu">
+                <div id="id-segment-pop-menu" class="ui vertical compact menu pop-menu">
                     <a class="item" onclick="popNewDataEntryDialog();">
                         <i class="plus icon"></i>
                         新建
                     </a>
                 </div>
-                <div id="plot-pop-menu" class="ui vertical compact menu pop-menu">
+                <div id="id-pop-menu" class="ui vertical compact menu pop-menu">
+                    <a class="item" onclick="popNewDataEntryDialog();">
+                        <i class="edit icon"></i>
+                        重命名
+                    </a>
+                    <a class="item" onclick="popNewDataEntryDialog();">
+                        <i class="trash icon"></i>
+                        删除
+                    </a>
+                </div>
+                <div id="plot-segment-pop-menu" class="ui vertical compact menu pop-menu">
                     <a class="item" onclick="popNewPlotEntryDialog();">
                         <i class="plus icon"></i>
-                        新建剧情流程
+                        添加剧情流程
                     </a>
                 </div>
             </div>
