@@ -61,11 +61,7 @@ function loadData(category) {
 
 function onLoadDataEnd(data, category) {
     advEditorContext.data[category] = data;
-    const idList = document.getElementById("id-list");
-    idList.innerHTML = "";
-    for (let id in data) {
-        addIDEntryView(idList, id);
-    }
+    refreshIDEntryViewList(null);
 
     switch (category) {
     case "plot":
@@ -83,6 +79,18 @@ function onLoadDataEnd(data, category) {
     default:
         console.error(`onLoadDataEnd: unknown data category "${category}".`);
         break;
+    }
+}
+
+function refreshIDEntryViewList(reg) {
+    const category = advEditorContext["cur-data-category"];
+    const dataSet = advEditorContext.data[category];
+    const idList = document.getElementById("id-list");
+    idList.innerHTML = "";
+    for (let id in dataSet) {
+        if (!reg || reg.test(id)) {
+            addIDEntryView(idList, id);
+        }
     }
 }
 
@@ -229,6 +237,20 @@ function closePopLayer() {
     }
 }
 
+function onSearchBarChange() {
+    try {
+        const pattern = $("#id-search-input")[0].value;
+        if (pattern.length > 0) {
+            const reg = new RegExp(pattern, "i");
+            refreshIDEntryViewList(reg);
+        } else {
+            refreshIDEntryViewList(null);
+        }
+    } catch (e) {
+        console.error(`onSearchBarChange: ${e}`);
+    }
+}
+
 function onInitEditor() {
     try {
         const dataCategory = localStorage.getItem("data-category");
@@ -292,6 +314,18 @@ function main() {
 
     $("#data-segment")[0].oncontextmenu = (event) => {
         popMenu("plot-segment-pop-menu", event.clientX, event.clientY);
+        event.stopPropagation();
+    };
+
+    $("#id-search-input")[0].onkeyup = (event) => {
+        if (event.key === "Enter") {
+            onSearchBarChange();
+        }
+        event.stopPropagation();
+    };
+
+    $("#id-search-btn")[0].onclick = (event) => {
+        onSearchBarChange();
         event.stopPropagation();
     };
 
