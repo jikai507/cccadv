@@ -237,14 +237,20 @@ function closePopLayer() {
     }
 }
 
-function onSearchBarChange() {
+function onSearchBarChange(icon) {
     try {
-        const pattern = $("#id-search-input")[0].value;
+        const searchInput = document.getElementById("id-search-input");
+        if (icon && icon.className === "close link icon") {
+            searchInput.value = "";
+        }
+        const pattern = searchInput.value;
         if (pattern.length > 0) {
             const reg = new RegExp(pattern, "i");
             refreshIDEntryViewList(reg);
+            $("#id-search-icon")[0].className = "close link icon";
         } else {
             refreshIDEntryViewList(null);
+            $("#id-search-icon")[0].className = "search link icon";
         }
     } catch (e) {
         console.error(`onSearchBarChange: ${e}`);
@@ -324,8 +330,9 @@ function main() {
         event.stopPropagation();
     };
 
-    $("#id-search-btn")[0].onclick = (event) => {
-        onSearchBarChange();
+    const searchIcon = $("#id-search-icon")[0];
+    searchIcon.onclick = (event) => {
+        onSearchBarChange(searchIcon);
         event.stopPropagation();
     };
 
