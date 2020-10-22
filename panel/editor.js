@@ -64,7 +64,7 @@ function onLoadDataEnd(data, category) {
     const idList = document.getElementById("id-list");
     idList.innerHTML = "";
     for (let id in data) {
-        addIDView(idList, id);
+        addIDEntryView(idList, id);
     }
 
     switch (category) {
@@ -86,10 +86,15 @@ function onLoadDataEnd(data, category) {
     }
 }
 
-function addIDView(idList, id) {
+function addIDEntryView(idList, id) {
     const idEntry = document.createElement("a");
     idEntry.className = "item id-entry";
+    setIDEntryView(idEntry, id);
+    idList.appendChild(idEntry);
+}
 
+function setIDEntryView(idEntry, id) {
+    idEntry.innerHTML = "";
     const span = document.createElement("div");
     span.style.width = "100%";
     span.innerHTML = id;
@@ -98,12 +103,11 @@ function addIDView(idList, id) {
         event.stopPropagation();
     };
     span.oncontextmenu = (event) => {
+        advEditorContext["id-pop-menu-args"] = [ idEntry, id ];
         popMenu("id-pop-menu", event.clientX, event.clientY);
         event.stopPropagation();
     };
-
     idEntry.appendChild(span);
-    idList.appendChild(idEntry);
 }
 
 function showData(id) {
@@ -169,6 +173,50 @@ function popNewDataEntryDialog() {
 
 function popNewPlotEntryDialog() {
 
+}
+
+function renameID() {
+    try {
+        const args = advEditorContext["id-pop-menu-args"];
+        if (!args || args.length <= 0) {
+            throw `invalid id entry.`;
+        }
+
+        const [ idEntry, id ] = args;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = args[1];
+
+        input.onkeyup = (event) => {
+            if (event.key === "Enter") {
+                input.onblur = null;
+                onChangeEntryID(idEntry, id, input.value);
+            }
+        };
+
+        input.onblur = () => {
+            input.onkeyup = null;
+            onChangeEntryID(idEntry, id, input.value);
+        };
+
+        const inputDiv = document.createElement("div");
+        inputDiv.className = "ui transparent input";
+        inputDiv.append(input);
+
+        idEntry.innerHTML = "";
+        idEntry.appendChild(inputDiv);
+    } catch (e) {
+        console.error(`renameID: ${e}`);
+    }
+}
+
+function onChangeEntryID(idEntry, oldID, newID) {
+    const category = advEditorContext["cur-data-category"];
+    const dataSet = advEditorContext.data[category];
+    const data = dataSet[oldID];
+    delete dataSet[oldID];
+    dataSet[newID] = data;
+    setIDEntryView(idEntry, newID.length <= 0 ? oldID : newID);
 }
 
 function closePopLayer() {

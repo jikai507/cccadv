@@ -53,7 +53,7 @@ function saveDataFile(event, data) {
     try {
         for (let category in data) {
             const filePath = getDataFile(category);
-            const dataJSON = JSON.stringify(data[category]);
+            const dataJSON = JSON.stringify(data[category], null, 4);
             fs.writeFileSync(filePath, dataJSON, { encoding: DATA_FILE_ENCODING });
         }
         if (event && event.reply) {
