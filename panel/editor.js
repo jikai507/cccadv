@@ -62,24 +62,6 @@ function loadData(category) {
 function onLoadDataEnd(data, category) {
     advEditorContext.data[category] = data;
     refreshIDEntryViewList(null);
-
-    switch (category) {
-    case "plot":
-        break;
-    case "character":
-        break;
-    case "background":
-        break;
-    case "audio":
-        break;
-    case "item":
-        break;
-    case "property":
-        break;
-    default:
-        console.error(`onLoadDataEnd: unknown data category "${category}".`);
-        break;
-    }
 }
 
 function refreshIDEntryViewList(reg) {
@@ -118,10 +100,129 @@ function setIDEntryView(idEntry, id) {
     idEntry.appendChild(span);
 }
 
+class DataViewSegment {
+
+    constructor() {
+        this.segmentDiv = this._createElement("div", "ui vertical segment");
+    }
+
+    _createElement(elemName, className, parent) {
+        if (!elemName) {
+            return null;
+        }
+        const elem = document.createElement(elemName);
+        elem.className = (!className ? "" : className);
+        if (parent) {
+            parent.appendChild(elem);
+        }
+        return elem;
+    }
+
+    _createRow(name) {
+        const gridDiv = this._createElement("div", "ui grid", this.segmentDiv);
+        const nameDiv = this._createElement("div", "one wide column", gridDiv);
+        nameDiv.innerHTML = name;
+        return this._createElement("div", "twelve wide column", gridDiv);
+    }
+
+    addDropdownList(name, options) {
+        const valueDiv = this._createRow(name);
+        for (let i = 0; i < options.length; i++) {
+            
+        }
+    }
+
+    show() {
+        const dataDiv = document.getElementById("data-segment");
+        dataDiv.appendChild(this.segmentDiv);
+    }
+
+}
+
 function showData(id) {
     const category = advEditorContext["cur-data-category"];
+    if (undefined === category || null === category) {
+        return;
+    }
     const dataEntry = advEditorContext.data[category][id];
-    // TODO: handle data entry here ...
+    if (undefined === dataEntry || null === dataEntry) {
+        return;
+    }
+    const dataDiv = document.getElementById("data-segment");
+    dataDiv.innerHTML = "";
+
+    switch (category) {
+    case "plot":
+        showPlotDataView(dataDiv, dataEntry);
+        break;
+    case "character":
+        showCharacterDataView(dataDiv, dataEntry);
+        break;
+    case "background":
+        showBackgroundDataView(dataDiv, dataEntry);
+        break;
+    case "audio":
+        showAudioDataView(dataDiv, dataEntry);
+        break;
+    case "item":
+        showItemDataView(dataDiv, dataEntry);
+        break;
+    case "property":
+        showPropertyDataView(dataDiv, dataEntry);
+        break;
+    default:
+        console.error(`onLoadDataEnd: unknown data category "${category}".`);
+        break;
+    }
+}
+
+function showPlotDataView(dataDiv, dataEntry) {
+    try {
+
+    } catch (e) {
+        console.error(`showPlotDataView: ${e}`);
+    }
+}
+
+function showCharacterDataView(dataDiv, dataEntry) {
+    try {
+
+    } catch (e) {
+        console.error(`showCharacterDataView: ${e}`);
+    }
+}
+
+function showBackgroundDataView(dataDiv, dataEntry) {
+    try {
+
+    } catch (e) {
+        console.error(`showBackgroundDataView: ${e}`);
+    }
+}
+
+function showAudioDataView(dataDiv, dataEntry) {
+    try {
+
+    } catch (e) {
+        console.error(`showAudioDataView: ${e}`);
+    }
+}
+
+function showItemDataView(dataDiv, dataEntry) {
+    try {
+
+    } catch (e) {
+        console.error(`showItemDataView: ${e}`);
+    }
+}
+
+function showPropertyDataView(dataDiv, dataEntry) {
+    try {
+        const dataView = new DataViewSegment();
+
+    } catch (e) {
+        console.error(`showPropertyDataView: ${e}`);
+    }
 }
 
 function saveData() {
@@ -164,11 +265,11 @@ function popMenu(menuID, x, y) {
     }
 }
 
-function popMenuByDataCategory() {
+function popMenuByDataCategory(x, y) {
     try {
         const category = advEditorContext["cur-data-category"];
         if ("plot" === category) {
-            popMenu("plot-pop-menu");
+            popMenu("plot-segment-pop-menu", x, y);
         }
     } catch (e) {
         console.error(e);
@@ -319,7 +420,7 @@ function main() {
     };
 
     $("#data-segment")[0].oncontextmenu = (event) => {
-        popMenu("plot-segment-pop-menu", event.clientX, event.clientY);
+        popMenuByDataCategory(event.clientX, event.clientY);
         event.stopPropagation();
     };
 
