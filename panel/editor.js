@@ -8,6 +8,39 @@ const LANGUAGE = {
     EN: "1",
 };
 
+const DEFAULT_TITLE = "ADV编辑器";
+
+const DATA_CATEGORY_TABS = ["plot", "character", "background", "audio", "item", "property"];
+
+const DATA_CATEGORY_NAMES = {
+    "plot": "剧情",
+    "character": "立绘",
+    "background": "背景",
+    "audio": "声音",
+    "item": "物品",
+    "property": "属性",
+};
+
+const DOM_TYPE = {
+    A: "a",
+    ICON: "i",
+    BUTTON: "button",
+    DIV: "div",
+    FORM: "form",
+    INPUT: "input",
+};
+
+function setWindowTitle(title) {
+    if (!title) {
+        return;
+    }
+    const titleNode = document.getElementById("title");
+    if (undefined === titleNode || null === titleNode) {
+        return;
+    }
+    titleNode.innerHTML = (!title ? DEFAULT_TITLE : title);
+}
+
 function updateContentPanelSize() {
     const w = document.body.offsetWidth;
     const h = document.body.offsetHeight;
@@ -24,9 +57,8 @@ function switchDataCategory(category) {
     if (advEditorContext["cur-data-category"] === category) {
         return;
     }
-    const tabs = ["plot", "character", "background", "audio", "item", "property"];
-    for (let i = 0; i < tabs.length; i++) {
-        const tabCategory = tabs[i];
+    for (let i = 0; i < DATA_CATEGORY_TABS.length; i++) {
+        const tabCategory = DATA_CATEGORY_TABS[i];
         const tabID = `${tabCategory}-tab`;
         const a = document.getElementById(tabID);
         if (tabCategory === category) {
@@ -77,7 +109,7 @@ function refreshIDEntryViewList(reg) {
 }
 
 function addIDEntryView(idList, id) {
-    const idEntry = document.createElement("a");
+    const idEntry = document.createElement(DOM_TYPE.A);
     idEntry.className = "item id-entry";
     setIDEntryView(idEntry, id);
     idList.appendChild(idEntry);
@@ -85,7 +117,7 @@ function addIDEntryView(idList, id) {
 
 function setIDEntryView(idEntry, id) {
     idEntry.innerHTML = "";
-    const span = document.createElement("div");
+    const span = document.createElement(DOM_TYPE.DIV);
     span.style.width = "100%";
     span.innerHTML = id;
     span.onmouseup = (event) => {
@@ -93,17 +125,18 @@ function setIDEntryView(idEntry, id) {
         event.stopPropagation();
     };
     span.oncontextmenu = (event) => {
-        advEditorContext["id-pop-menu-args"] = [ idEntry, id ];
+        advEditorContext["id-pop-menu-args"] = [idEntry, id];
         popMenu("id-pop-menu", event.clientX, event.clientY);
         event.stopPropagation();
     };
     idEntry.appendChild(span);
 }
 
-class DataViewSegment {
+class DataForm {
 
     constructor() {
-        this.segmentDiv = this._createElement("div", "ui vertical segment");
+        this.segmentDiv = this._createElement(DOM_TYPE.DIV, "ui vertical segment");
+        this.form = this._createElement(DOM_TYPE.FORM, "ui form", this.segmentDiv);
     }
 
     _createElement(elemName, className, parent) {
@@ -111,25 +144,53 @@ class DataViewSegment {
             return null;
         }
         const elem = document.createElement(elemName);
-        elem.className = (!className ? "" : className);
+        if (undefined !== className && null !== className) {
+            elem.className = className;
+        }
         if (parent) {
             parent.appendChild(elem);
         }
         return elem;
     }
 
-    _createRow(name) {
-        const gridDiv = this._createElement("div", "ui grid", this.segmentDiv);
-        const nameDiv = this._createElement("div", "one wide column", gridDiv);
+    _createField(name) {
+        const field = this._createElement(DOM_TYPE.DIV, "field", this.form);
+        const nameDiv = this._createElement("label", null, field);
         nameDiv.innerHTML = name;
-        return this._createElement("div", "twelve wide column", gridDiv);
+        return field;
     }
 
-    addDropdownList(name, options) {
-        const valueDiv = this._createRow(name);
+    addDropdownList(name, options, defaultOpt) {
+        const field = this._createField(name);
+        const dropdownDiv = this._createElement(DOM_TYPE.DIV, "ui selection dropdown form-field", field);
+        this._createElement(DOM_TYPE.DIV, "text", dropdownDiv).innerHTML = (undefined === defaultOpt ? options[0] : defaultOpt);
+        this._createElement(DOM_TYPE.ICON, "dropdown icon", dropdownDiv);
+        const menu = this._createElement(DOM_TYPE.DIV, "menu", dropdownDiv);
         for (let i = 0; i < options.length; i++) {
-            
+            const item = this._createElement(DOM_TYPE.DIV, "item", menu);
+            item["data-value"] = `${i}`;
+            item.innerHTML = options[i];
         }
+        return dropdownDiv;
+    }
+
+    addResourceRef(name) {
+        const field = this._createField(name);
+        const inputDiv = this._createElement(DOM_TYPE.DIV, "ui action input form-field", field);
+
+        const input = this._createElement(DOM_TYPE.INPUT, null, inputDiv);
+        input.type = "text";
+        input.placeholder = "未选择资源";
+        input.readonly = true;
+
+        const button = this._createElement(DOM_TYPE.BUTTON, "ui teal right labeled icon button", inputDiv);
+        button.innerHTML = "浏览";
+
+        this._createElement(DOM_TYPE.ICON, "folder open icon", button);
+    }
+
+    addLocaleTextEdit(name) {
+        const field = this._createField(name);
     }
 
     show() {
@@ -150,6 +211,8 @@ function showData(id) {
     }
     const dataDiv = document.getElementById("data-segment");
     dataDiv.innerHTML = "";
+
+    setWindowTitle(`${DEFAULT_TITLE} - ${DATA_CATEGORY_NAMES[category]}(${id})`);
 
     switch (category) {
     case "plot":
@@ -202,7 +265,9 @@ function showBackgroundDataView(dataDiv, dataEntry) {
 
 function showAudioDataView(dataDiv, dataEntry) {
     try {
-
+        const dataForm = new DataForm();
+        dataForm.addResourceRef("资源");
+        dataForm.show();
     } catch (e) {
         console.error(`showAudioDataView: ${e}`);
     }
@@ -218,8 +283,10 @@ function showItemDataView(dataDiv, dataEntry) {
 
 function showPropertyDataView(dataDiv, dataEntry) {
     try {
-        const dataView = new DataViewSegment();
-
+        const dataForm = new DataForm();
+        const dropdown = dataForm.addDropdownList("类型", [ "数字", "文本", "布尔" ], "数字");
+        dataForm.show();
+        $(dropdown).dropdown();
     } catch (e) {
         console.error(`showPropertyDataView: ${e}`);
     }
@@ -292,7 +359,7 @@ function renameID() {
         }
 
         const [ idEntry, id ] = args;
-        const input = document.createElement("input");
+        const input = document.createElement(DOM_TYPE.INPUT);
         input.type = "text";
         input.value = args[1];
 
@@ -308,7 +375,7 @@ function renameID() {
             onChangeEntryID(idEntry, id, input.value);
         };
 
-        const inputDiv = document.createElement("div");
+        const inputDiv = document.createElement(DOM_TYPE.DIV);
         inputDiv.className = "ui transparent input";
         inputDiv.append(input);
 
