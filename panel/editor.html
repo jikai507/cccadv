@@ -93,28 +93,29 @@
                 </div>
             </div>
 
-            <div id="dimmer-layer" class="ui center aligned dimmer active">
-                <div class="content">
-                    <div class="ui form">
+            <div id="dimmer-layer" class="ui center aligned dimmer">
+                <div id="dimmer-content" class="content">
+                    <div id="plot-entry-dlg" class="ui form">
                         <div class="field">
                             <div id="plot-action-type-dropdown" class="ui selection dropdown">
-                                文本剧情 <i class="dropdown icon"></i>
+                                <div class="text">文本剧情</div>
+                                <i class="dropdown icon"></i>
                                 <div class="menu">
-                                    <div class="item">显示背景</div>
-                                    <div class="item">显示立绘</div>
-                                    <div class="item">播放声音</div>
-                                    <div class="item">文本剧情</div>
-                                    <div class="item">选项剧情</div>
-                                    <div class="item">条件剧情</div>
+                                    <div class="item" data-value="0">显示背景</div>
+                                    <div class="item" data-value="1">显示立绘</div>
+                                    <div class="item" data-value="2">播放声音</div>
+                                    <div class="item active" data-value="3">文本剧情</div>
+                                    <div class="item" data-value="4">选项剧情</div>
+                                    <div class="item" data-value="5">条件剧情</div>
                                 </div>
                             </div>
                         </div>
                         <div class="equal width fields">
                             <div class="field">
-                                <div class="ui teal button dimmer-btn-left">添加</div>
+                                <div class="ui teal button dimmer-btn-left" onclick="onAddPlotAction();">添加</div>
                             </div>
                             <div class="field">
-                                <div class="ui button dimmer-btn-right">取消</div>
+                                <div class="ui button dimmer-btn-right" onclick="closeDimmer();">取消</div>
                             </div>
                         </div>
                     </div>

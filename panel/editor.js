@@ -31,6 +31,15 @@ const DOM_TYPE = {
     IMAGE: "image",
 };
 
+const PLOT_ACTION_TYPE = {
+    SET_BACKGROUND: 0,
+    SET_CHARACTER: 1,
+    PLAY_BGM: 2,
+    PLOT_TEXT: 3,
+    SELECTION: 4,
+    CONDITION: 5,
+};
+
 function setWindowTitle(title) {
     if (!title) {
         return;
@@ -52,6 +61,14 @@ function updateContentPanelSize() {
 
 window.onresize = function() {
     updateContentPanelSize();
+}
+
+function newLocaleTextObject() {
+    const obj = {};
+    for (let l in LANGUAGE) {
+        obj[l] = "";
+    }
+    return obj;
 }
 
 function switchDataCategory(category) {
@@ -188,8 +205,10 @@ class DataForm {
     }
 
     addAudioRef(name) {
-        const field = this._createField(name);
-        const inputDiv = this._createElement(DOM_TYPE.DIV, "ui action input", field);
+        const fieldGroup = this._createFieldGroup();
+
+        const resField = this._createField(name, fieldGroup, "eight wide");
+        const inputDiv = this._createElement(DOM_TYPE.DIV, "ui action input", resField);
         const input = this._createElement(DOM_TYPE.INPUT, null, inputDiv);
         input.type = "text";
         input.placeholder = "未选择资源";
@@ -197,6 +216,15 @@ class DataForm {
         const button = this._createElement(DOM_TYPE.BUTTON, "ui teal right labeled icon button", inputDiv);
         button.innerHTML = "浏览";
         this._createElement(DOM_TYPE.ICON, "folder open icon", button);
+
+        const posXField = this._createField("起始时间", fieldGroup, "two wide");
+        const posXInput = this._createElement(DOM_TYPE.INPUT, null, posXField);
+        posXInput.value = "0";
+
+        const posYField = this._createField("结束时间", fieldGroup, "two wide");
+        const posYInput = this._createElement(DOM_TYPE.INPUT, null, posYField);
+        posYInput.value = "0";
+
         return inputDiv;
     }
 
@@ -232,7 +260,7 @@ class DataForm {
         // const previewField = this._createField("图片预览");
         // const image = this._createElement(DOM_TYPE.IMAGE, "ui big image", previewField);
 
-        return inputDiv;
+        return fieldGroup;
     }
 
     show() {
@@ -251,6 +279,9 @@ function showData(id) {
     if (undefined === dataEntry || null === dataEntry) {
         return;
     }
+
+    advEditorContext["cur-selected-dataid"] = id;
+
     const dataDiv = document.getElementById("data-segment");
     dataDiv.innerHTML = "";
 
@@ -396,7 +427,69 @@ function popNewDataEntryDialog() {
 }
 
 function popNewPlotEntryDialog() {
+    popDimmer("plot-entry-dlg");
+}
 
+function onAddPlotAction() {
+    const category = advEditorContext["cur-data-category"];
+    const id = advEditorContext["cur-selected-dataid"];
+    const actions = advEditorContext.data[category][id];
+
+    let action = null;
+    const selectedVal = parseInt($("#plot-action-type-dropdown").dropdown("get value"));
+    switch (selectedVal) {
+    case PLOT_ACTION_TYPE.SET_BACKGROUND:
+        action = {
+            "type": "show-background",
+            "name": "",
+        };
+        break;
+
+    case PLOT_ACTION_TYPE.SET_CHARACTER:
+        action = {
+            "type": "show-character",
+            "name": "",
+            "pos": 0,
+            "dark": false,
+        };
+        break;
+
+    case PLOT_ACTION_TYPE.PLAY_BGM:
+        action = {
+            "type": "play-bgm",
+            "name": "",
+        };
+        break;
+
+    case PLOT_ACTION_TYPE.PLOT_TEXT:
+        action = {
+            "type": "plot-text",
+            "text": newLocaleTextObject(),
+        };
+        break;
+
+    case PLOT_ACTION_TYPE.SELECTION:
+        action = {
+            "type": "selection",
+            "options": [],
+        };
+        break;
+
+    case PLOT_ACTION_TYPE.CONDITION:
+        action = {
+            "type": "condition",
+            "conditions": [],
+        };
+        break;
+    }
+
+    if (action) {
+        actions.push(action);
+        console.info(actions);
+        showData(id);
+    }
+
+    closeDimmer();
 }
 
 function renameID() {
@@ -474,6 +567,16 @@ function onSearchBarChange(icon) {
 }
 
 function popDimmer(id) {
+    const contentDiv = document.getElementById("dimmer-content");
+    for (let i = 0; i < contentDiv.children.length; i++) {
+        const dlg = contentDiv.children[i];
+        if (dlg.id === id) {
+            dlg.style.visibility = "visible";
+        } else {
+            dlg.style.visibility = "hidden";
+        }
+    }
+
     $("#dimmer-layer").dimmer("show");
 }
 
@@ -562,6 +665,10 @@ function main() {
 
     $("#dimmer-layer")[0].onclick = (event) => {
         closeDimmer();
+        event.stopPropagation();
+    };
+
+    $("#plot-entry-dlg")[0].onclick = (event) => {
         event.stopPropagation();
     };
 
