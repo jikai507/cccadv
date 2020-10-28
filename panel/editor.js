@@ -28,6 +28,7 @@ const DOM_TYPE = {
     DIV: "div",
     FORM: "form",
     INPUT: "input",
+    IMAGE: "image",
 };
 
 function setWindowTitle(title) {
@@ -153,8 +154,12 @@ class DataForm {
         return elem;
     }
 
-    _createField(name) {
-        const field = this._createElement(DOM_TYPE.DIV, "field", this.form);
+    _createFieldGroup() {
+        return this._createElement(DOM_TYPE.DIV, "equal width fields", this.form);
+    }
+
+    _createField(name, fieldGroup, sizeClass) {
+        const field = this._createElement(DOM_TYPE.DIV, `field ${!sizeClass ? "" : sizeClass}`, (!fieldGroup ? this.form : fieldGroup));
         const nameDiv = this._createElement("label", null, field);
         nameDiv.innerHTML = name;
         return field;
@@ -162,7 +167,7 @@ class DataForm {
 
     addDropdownList(name, options, defaultOpt) {
         const field = this._createField(name);
-        const dropdownDiv = this._createElement(DOM_TYPE.DIV, "ui selection dropdown form-field", field);
+        const dropdownDiv = this._createElement(DOM_TYPE.DIV, "ui selection dropdown", field);
         this._createElement(DOM_TYPE.DIV, "text", dropdownDiv).innerHTML = (undefined === defaultOpt ? options[0] : defaultOpt);
         this._createElement(DOM_TYPE.ICON, "dropdown icon", dropdownDiv);
         const menu = this._createElement(DOM_TYPE.DIV, "menu", dropdownDiv);
@@ -174,23 +179,60 @@ class DataForm {
         return dropdownDiv;
     }
 
-    addResourceRef(name) {
+    addLocaleTextEdit(name) {
         const field = this._createField(name);
-        const inputDiv = this._createElement(DOM_TYPE.DIV, "ui action input form-field", field);
+        const input = this._createElement(DOM_TYPE.INPUT, null, field);
+        input.type = "text";
+        input.placeholder = "请输入文本";
+        return input;
+    }
 
+    addAudioRef(name) {
+        const field = this._createField(name);
+        const inputDiv = this._createElement(DOM_TYPE.DIV, "ui action input", field);
         const input = this._createElement(DOM_TYPE.INPUT, null, inputDiv);
         input.type = "text";
         input.placeholder = "未选择资源";
         input.readonly = true;
-
         const button = this._createElement(DOM_TYPE.BUTTON, "ui teal right labeled icon button", inputDiv);
         button.innerHTML = "浏览";
-
         this._createElement(DOM_TYPE.ICON, "folder open icon", button);
+        return inputDiv;
     }
 
-    addLocaleTextEdit(name) {
-        const field = this._createField(name);
+    addImageRef(name) {
+        const fieldGroup = this._createFieldGroup();
+
+        const resField = this._createField(name, fieldGroup, "eight wide");
+        const inputDiv = this._createElement(DOM_TYPE.DIV, "ui action input", resField);
+        const input = this._createElement(DOM_TYPE.INPUT, null, inputDiv);
+        input.type = "text";
+        input.placeholder = "未选择资源";
+        input.readonly = true;
+        const button = this._createElement(DOM_TYPE.BUTTON, "ui teal right labeled icon button", inputDiv);
+        button.innerHTML = "浏览";
+        this._createElement(DOM_TYPE.ICON, "folder open icon", button);
+
+        const posXField = this._createField("位置x", fieldGroup, "one wide");
+        const posXInput = this._createElement(DOM_TYPE.INPUT, null, posXField);
+        posXInput.value = "0";
+
+        const posYField = this._createField("位置y", fieldGroup, "one wide");
+        const posYInput = this._createElement(DOM_TYPE.INPUT, null, posYField);
+        posYInput.value = "0";
+
+        const scaleXField = this._createField("缩放x", fieldGroup, "one wide");
+        const scaleXInput = this._createElement(DOM_TYPE.INPUT, null, scaleXField);
+        scaleXInput.value = "1";
+
+        const scaleYField = this._createField("缩放y", fieldGroup, "one wide");
+        const scaleYInput = this._createElement(DOM_TYPE.INPUT, null, scaleYField);
+        scaleYInput.value = "1";
+
+        // const previewField = this._createField("图片预览");
+        // const image = this._createElement(DOM_TYPE.IMAGE, "ui big image", previewField);
+
+        return inputDiv;
     }
 
     show() {
@@ -249,7 +291,10 @@ function showPlotDataView(dataDiv, dataEntry) {
 
 function showCharacterDataView(dataDiv, dataEntry) {
     try {
-
+        const dataForm = new DataForm();
+        dataForm.addLocaleTextEdit("名字");
+        dataForm.addImageRef("图片");
+        dataForm.show();
     } catch (e) {
         console.error(`showCharacterDataView: ${e}`);
     }
@@ -257,7 +302,10 @@ function showCharacterDataView(dataDiv, dataEntry) {
 
 function showBackgroundDataView(dataDiv, dataEntry) {
     try {
-
+        const dataForm = new DataForm();
+        dataForm.addLocaleTextEdit("背景名");
+        dataForm.addImageRef("图片");
+        dataForm.show();
     } catch (e) {
         console.error(`showBackgroundDataView: ${e}`);
     }
@@ -266,7 +314,7 @@ function showBackgroundDataView(dataDiv, dataEntry) {
 function showAudioDataView(dataDiv, dataEntry) {
     try {
         const dataForm = new DataForm();
-        dataForm.addResourceRef("资源");
+        dataForm.addAudioRef("音频");
         dataForm.show();
     } catch (e) {
         console.error(`showAudioDataView: ${e}`);
@@ -425,6 +473,14 @@ function onSearchBarChange(icon) {
     }
 }
 
+function popDimmer(id) {
+    $("#dimmer-layer").dimmer("show");
+}
+
+function closeDimmer() {
+    $("#dimmer-layer").dimmer("hide");
+}
+
 function onInitEditor() {
     try {
         const dataCategory = localStorage.getItem("data-category");
@@ -503,6 +559,13 @@ function main() {
         onSearchBarChange(searchIcon);
         event.stopPropagation();
     };
+
+    $("#dimmer-layer")[0].onclick = (event) => {
+        closeDimmer();
+        event.stopPropagation();
+    };
+
+    $("#plot-action-type-dropdown").dropdown();
 
     onInitEditor();
 }
